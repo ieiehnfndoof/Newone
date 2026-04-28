@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MALASKA ADMIN PANEL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-color: #000000 !important;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* SNOW ANIMATION */
+        .snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .snowflake {
+            position: absolute;
+            color: #ffffff;
+            font-size: 1em;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        .panel {
+            background-color: #111111;
+            border: 1px solid #333333;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 100, 0.1);
+            z-index: 10;
+            position: relative;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 28px;
+            letter-spacing: 3px;
+            margin: 0 0 5px 0;
+        }
+        .subtitle {
+            color: #888888;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+        input, select {
+            width: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid #444444;
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        .status {
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .light {
+            width: 12px;
+            height: 12px;
+            background-color: #00ff44;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff44;
+        }
+        .text {
+            color: #888888;
+            font-size: 13px;
+        }
+        #keyResult {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0a0a;
+            border: 1px solid #00ff44;
+            border-radius: 8px;
+            color: #00ff44;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .link {
+            color: #00ff44;
+            font-size: 12px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        /* DASHBOARD STYLES */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-box {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px 10px;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff44;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SNOW CONTAINER -->
+<div class="snow" id="snow"></div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="panel">
+    <h1>MALASKA ADMIN</h1>
+    <div class="subtitle">SECURE LOGIN</div>
+
+    <input type="text" id="user" placeholder="USERNAME">
+    <input type="password" id="pass" placeholder="PASSWORD">
+
+    <button onclick="login()">🔒 SIGN IN</button>
+
+    <div class="status">
+        <div class="light"></div>
+        <div class="text">SYSTEM ONLINE</div>
+    </div>
+    <div class="link" onclick="showSignup()">Don't have account? Sign Up</div>
+</div>
+
+<!-- SIGN UP PAGE -->
+<div id="signupPage" class="panel hidden">
+    <h1>CREATE ACCOUNT</h1>
+    <div class="subtitle">REGISTER NEW USER</div>
+
+    <input type="text" placeholder="FULL NAME">
+    <input type="email" placeholder="EMAIL">
+    <input type="password" placeholder="CREATE PASSWORD">
+    
+    <input type="text" id="refCode" placeholder="REFERRAL CODE">
+
+    <button onclick="register()">✅ CREATE ACCOUNT</button>
+    
+    <div class="link" onclick="showLogin()">Back to Login</div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="dashboardPage" class="panel hidden">
+    <h1>DASHBOARD</h1>
+    <div class="subtitle">ADMIN OVERVIEW</div>
+
+    <div class="stats-container">
+        <div class="stat-box">
+            <div class="stat-number" id="totalUsers">128</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="onlineUsers">42</div>
+            <div class="stat-label">Users Online</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="totalKeys">563</div>
+            <div class="stat-label">Keys Generated</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="activeKeys">89</div>
+            <div class="stat-label">Active Keys</div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="showGenerator()">🔑 GO TO GENERATOR</button>
+        <button class="nav-btn" onclick="logout()">🚪 LOGOUT</button>
+    </div>
+</div>
+
+<!-- GENERATOR PAGE -->
+<div id="generatorPage" class="panel hidden">
+    <h1>KEY GENERATOR</h1>
+    <div class="subtitle">CREATE LICENSE KEYS</div>
+
+    <select id="duration">
+        <option>SELECT DURATION</option>
+        <option>1 DAY</option>
+        <option>7 DAYS</option>
+        <option>30 DAYS</option>
+        <option>1 YEAR</option>
+        <option>5 YEARS</option>
+        <option>LIFETIME</option>
+    </select>
+
+    <select id="hours">
+        <option>SELECT HOURS</option>
+        <option>1 HOUR</option>
+        <option>2 HOURS</option>
+        <option>10 HOURS</option>
+    </select>
+
+    <select id="devices">
+        <option>SELECT DEVICE LIMIT</option>
+        <option>1 DEVICE</option>
+        <option>2 DEVICES</option>
+        <option>3 DEVICES</option>
+        <option>4 DEVICES</option>
+        <option>5 DEVICES</option>
+        <option>6 DEVICES</option>
+        <option>7 DEVICES</option>
+        <option>10 DEVICES</option>
+        <option>50 DEVICES</option>
+        <option>100 DEVICES</option>
+    </select>
+
+    <button onclick="generateKey()">⚡ GENERATE KEY ⚡</button>
+
+    <div id="keyResult"></div>
+    
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="showDashboard()">📊 BACK TO DASHBOARD</button>
+    </div>
+</div>
+
+<script>
+const CORRECT_USER = "Jogo";
+const CORRECT_PASS = "valorantmaster12345";
+const CORRECT_REF = "§∆∅531";
+
+// SNOW FALLING EFFECT
+function createSnow() {
+    const snow = document.getElementById('snow');
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    snowflake.innerHTML = "❄";
+    snowflake.style.left = Math.random() * window.innerWidth + 'px';
+    snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+    snowflake.style.opacity = Math.random();
+    snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+    
+    snow.appendChild(snowflake);
+    
+    setTimeout(() => {
+        snowflake.remove();
+    }, 5000);
+}
+
+setInterval(createSnow, 100);
+
+// PAGE FUNCTIONS
+function login() {
+    const user = document.getElementById('user').value;
+    const pass = document.getElementById('pass').value;
+
+    if(user === CORRECT_USER && pass === CORRECT_PASS) {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('dashboardPage').classList.remove('hidden');
+    } else {
+        alert("❌ WRONG USERNAME OR PASSWORD!");
+    }
+}
+
+function showLogin() {
+    document.getElementById('signupPage').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+}
+
+function showSignup() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('signupPage').classList.remove('hidden');
+}
+
+function showDashboard() {
+    document.getElementById('generatorPage').classList.add('hidden');
+    document.getElementById('dashboardPage').classList.remove('hidden');
+}
+
+function showGenerator() {
+    document.getElementById('dashboardPage').classList.add('hidden');
+    document.getElementById('generatorPage').classList.remove('hidden');
+}
+
+function logout() {
+    document.getElementById('dashboardPage').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+}
+
+function register() {
+    const ref = document.getElementById('refCode').value;
+    
+    if(ref === CORRECT_REF) {
+        alert("✅ ACCOUNT CREATED SUCCESSFULLY!");
+        showLogin();
+    } else {
+        alert("❌ INVALID REFERRAL CODE! ACCESS DENIED!");
+    }
+}
+
+function generateKey() {
+    const duration = document.getElementById('duration').value;
+    const hours = document.getElementById('hours').value;
+    const devices = document.getElementById('devices').value;
+
+    let num = Math.floor(10000 + Math.random() * 90000);
+    let finalKey = "Malaska_" + num;
+
+    document.getElementById('keyResult').innerHTML = 
+    `✅ KEY GENERATED <br><br> 
+    <span style="font-size:20px;">${finalKey}</span> <br><br> 
+    🕒 ${duration} | ⏱️ ${hours} <br> 📱 ${devices}`;
+    
+    document.getElementById('keyResult').style.display = "block";
+
+    navigator.clipboard.writeText(finalKey).then(() => {
+        alert("📋 KEY COPIED TO CLIPBOARD!");
+    });
+}
+</script>
+
+</body>
+  </html>
+  
